@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,10 +22,12 @@ public class SelectionActivity extends ActionBarActivity {
 
     private void setGenderAndContinue(String gender) {
         // Store gender
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("net.spiralpower.pottytag", MODE_PRIVATE);
         Editor editor  = prefs.edit();
         editor.putString("gender", gender);
         editor.commit();
+        prefs = getPreferences(MODE_PRIVATE);
+        Log.d("potty_debug", ((Boolean)prefs.contains("gender")).toString());
 
         // Move to status screen
         Intent statusActivityIntent = new Intent(this, StatusActivity.class);
