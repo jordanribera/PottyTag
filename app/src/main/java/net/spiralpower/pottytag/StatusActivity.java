@@ -1,8 +1,6 @@
 package net.spiralpower.pottytag;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,28 +16,15 @@ public class StatusActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_status);
 
-        SharedPreferences prefs = getSharedPreferences("net.spiralpower.pottytag", MODE_PRIVATE);
-
-
-        if(prefs.contains("gender")) {
-            setContentView(R.layout.activity_status);
-
-            Button actionButton = (Button) this.findViewById(R.id.actionButton);
-            actionButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    handleActionButtonClick(v);
-                }
-            });
-        }
-        else
-        {
-            Intent settingsActivityIntent = new Intent(this, SelectionActivity.class);
-            startActivity(settingsActivityIntent);
-            return;
-        }
+        Button actionButton = (Button)this.findViewById(R.id.actionButton);
+        actionButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                handleActionButtonClick(v);
+            }
+        });
     }
 
     @Override
