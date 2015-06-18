@@ -1,17 +1,30 @@
 package net.spiralpower.pottytag;
 
+import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 
 public class StatusActivity extends ActionBarActivity {
+
+    private boolean checkedIn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
+
+        Button actionButton = (Button)this.findViewById(R.id.actionButton);
+        actionButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                handleActionButtonClick(v);
+            }
+        });
     }
 
     @Override
@@ -34,5 +47,32 @@ public class StatusActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void handleActionButtonClick(View v)
+    {
+
+        //Button actionButton = (Button)this.findViewById(R.id.actionButton);
+        Button actionButton = (Button)v;
+
+        this.checkedIn = !this.checkedIn;
+
+        if (this.checkedIn)
+        {
+            actionButton.setText("Check Out");
+            this.checkedIn = true;
+        }
+        else
+        {
+            actionButton.setText("Check In");
+            this.checkedIn = false;
+        }
+
+        /**Context context = getApplicationContext();
+        CharSequence text = actionButton.getText();
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();*/
     }
 }
