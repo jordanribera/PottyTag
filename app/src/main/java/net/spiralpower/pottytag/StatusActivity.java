@@ -22,7 +22,7 @@ public class StatusActivity extends ActionBarActivity {
         Button actionButton = (Button)this.findViewById(R.id.actionButton);
         actionButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                handleActionButtonClick();
+                handleActionButtonClick(v);
             }
         });
     }
@@ -49,10 +49,13 @@ public class StatusActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void handleActionButtonClick()
+    public void handleActionButtonClick(View v)
     {
 
-        Button actionButton = (Button)this.findViewById(R.id.actionButton);
+        //Button actionButton = (Button)this.findViewById(R.id.actionButton);
+        Button actionButton = (Button)v;
+
+        this.checkedIn = !this.checkedIn;
 
         if (this.checkedIn)
         {
@@ -65,11 +68,11 @@ public class StatusActivity extends ActionBarActivity {
             this.checkedIn = false;
         }
 
-        Context context = getApplicationContext();
-        CharSequence text = "Hello toast!";
+        /**Context context = getApplicationContext();
+        CharSequence text = actionButton.getText();
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
+        toast.show();*/
     }
 }
