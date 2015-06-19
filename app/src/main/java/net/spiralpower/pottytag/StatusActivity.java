@@ -34,7 +34,7 @@ public class StatusActivity extends ActionBarActivity {
     private RequestQueue mRequestQueue;
     private String mGender;
     private int mLastCheckIn;
-    private boolean mDebugSelection = true;
+    private boolean mDebugSelection = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +43,18 @@ public class StatusActivity extends ActionBarActivity {
 
         SharedPreferences prefs = getSharedPreferences("net.spiralpower.pottytag", MODE_PRIVATE);
 
+        if (mDebugSelection)
+        {
+            SharedPreferences.Editor prefsEditor = prefs.edit();
+            prefsEditor.clear();
+            prefsEditor.commit();
+            prefs = getSharedPreferences("net.spiralpower.pottytag", MODE_PRIVATE);
+        }
 
-
-        if(prefs.contains("gender") || mDebugSelection) {
+        if(prefs.contains("gender") || !mDebugSelection) {
             this.mGender = prefs.getString("gender", "z");
 
             setContentView(R.layout.activity_status);
-
-            ImageView statusImage = (ImageView)findViewById(R.id.statusImage);
-            statusImage.setMinimumHeight(statusImage.getMeasuredWidth());
 
             Button actionButton = (Button) this.findViewById(R.id.actionButton);
             actionButton.setOnClickListener(new View.OnClickListener() {
@@ -104,7 +107,6 @@ public class StatusActivity extends ActionBarActivity {
 
     public void handleActionButtonClick(View v)
     {
-
         //Button actionButton = (Button)this.findViewById(R.id.actionButton);
         Button actionButton = (Button)v;
 
