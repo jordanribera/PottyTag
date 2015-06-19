@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -47,6 +48,7 @@ public class SelectionActivity extends ActionBarActivity {
         // Move to status screen
         Intent statusActivityIntent = new Intent(this, StatusActivity.class);
         startActivity(statusActivityIntent);
+        this.finish();
     }
 
     @Override
@@ -54,7 +56,51 @@ public class SelectionActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection);
         popPlayer = MediaPlayer.create(this, R.raw.pop);
-        //unBlink();
+
+        ImageView malePoop = (ImageView)findViewById(R.id.maleButton);
+        ImageView femalePoop = (ImageView)findViewById(R.id.femaleButton);
+
+        View.OnTouchListener malePoopTouchHandler = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d("potty_debug", event.toString());
+                ImageView touchingPoop = (ImageView)v;
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
+                {
+                    touchingPoop.setImageResource(R.drawable.m_cutiepoo_blink);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP)
+                {
+                    touchingPoop.setImageResource(R.drawable.m_cutiepoo);
+                }
+
+                return false;
+            }
+        };
+
+        View.OnTouchListener femalePoopTouchHandler = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d("potty_debug", event.toString());
+                ImageView touchingPoop = (ImageView)v;
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
+                {
+                    touchingPoop.setImageResource(R.drawable.f_cutiepoo_blink);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP)
+                {
+                    touchingPoop.setImageResource(R.drawable.f_cutiepoo);
+                }
+
+                return false;
+            }
+        };
+
+        malePoop.setOnTouchListener(malePoopTouchHandler);
+        femalePoop.setOnTouchListener(femalePoopTouchHandler);
+
     }
 
     @Override
@@ -79,9 +125,8 @@ public class SelectionActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void doBlink()
+    /**public void doBlink()
     {
-        Log.w("potty_debug", "doBlink()");
 
         ImageView malePoop = (ImageView)findViewById(R.id.maleButton);
         ImageView femalePoop = (ImageView)findViewById(R.id.femaleButton);
@@ -89,13 +134,17 @@ public class SelectionActivity extends ActionBarActivity {
         Random random = new Random();
         int whichBlink = random.nextInt(2);
 
+        Log.w("potty_debug", "doBlink(), on button " + whichBlink);
+
         if (whichBlink == 0)
         {
             malePoop.setImageResource(R.drawable.m_cutiepoo_blink);
+            malePoop.postInvalidate();
         }
         else
         {
             femalePoop.setImageResource(R.drawable.f_cutiepoo_blink);
+            femalePoop.postInvalidate();
         }
 
         Runnable removeBlink = new Runnable() {
@@ -111,7 +160,6 @@ public class SelectionActivity extends ActionBarActivity {
 
     public void unBlink()
     {
-        Log.w("potty_debug", "unBlink()");
 
         ImageView malePoop = (ImageView)findViewById(R.id.maleButton);
         ImageView femalePoop = (ImageView)findViewById(R.id.femaleButton);
@@ -121,6 +169,7 @@ public class SelectionActivity extends ActionBarActivity {
 
         Random random = new Random();
         int blinkRestDuration = random.nextInt(5 - 2) + 2;
+        Log.w("potty_debug", "unBlink(), resting for " + blinkRestDuration);
 
         Runnable nextBlink = new Runnable() {
             @Override
@@ -131,5 +180,5 @@ public class SelectionActivity extends ActionBarActivity {
 
         mBlinkWorker.schedule(nextBlink, blinkRestDuration, TimeUnit.SECONDS);
 
-    }
+    }*/
 }

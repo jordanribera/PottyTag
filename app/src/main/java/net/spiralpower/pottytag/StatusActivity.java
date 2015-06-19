@@ -135,6 +135,7 @@ public class StatusActivity extends ActionBarActivity {
             mActivityVisible = false;
             Intent settingsActivityIntent = new Intent(this, SelectionActivity.class);
             startActivity(settingsActivityIntent);
+            this.finish();
             return;
         }
     }
@@ -512,6 +513,7 @@ public class StatusActivity extends ActionBarActivity {
         //createNotification();
         Intent settingsActivityIntent = new Intent(this, SelectionActivity.class);
         startActivity(settingsActivityIntent);
+        this.finish();
     }
 
     public void nextTimer()
