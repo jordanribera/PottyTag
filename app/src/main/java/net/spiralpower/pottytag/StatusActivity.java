@@ -123,6 +123,7 @@ public class StatusActivity extends ActionBarActivity {
         }
         else
         {
+            mActivityVisible = false;
             Intent settingsActivityIntent = new Intent(this, SelectionActivity.class);
             startActivity(settingsActivityIntent);
             return;
@@ -224,6 +225,8 @@ public class StatusActivity extends ActionBarActivity {
                     mLastCheckIn = responseID;
                     mCheckedIn = true;
                     updateActionButton();
+                    startWarningTimer();
+                    startExpirationTimer();
                 }
             }
         };
@@ -494,7 +497,7 @@ public class StatusActivity extends ActionBarActivity {
 
     public void rechooseGender(View v)
     {
-        createNotification();
+        //createNotification();
         Intent settingsActivityIntent = new Intent(this, SelectionActivity.class);
         startActivity(settingsActivityIntent);
     }
@@ -528,5 +531,31 @@ public class StatusActivity extends ActionBarActivity {
 
         NotificationManager noteManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         noteManager.notify(mNotificationID, noteBuilder.build());
+    }
+
+    public void startWarningTimer()
+    {
+        int warningTimeMs = 270000;
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getStatus();
+                Log.d("potty_debug", "warning timer execute");
+                if (mCheckedIn) createNotification();
+            }
+        }, warningTimeMs);
+    }
+
+    public void startExpirationTimer()
+    {
+        int expirationTimeMs = 300000;
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getStatus();
+                Log.d("potty_debug", "expiration timer execute");
+                doCheckOut();
+            }
+        }, expirationTimeMs);
     }
 }

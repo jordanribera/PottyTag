@@ -32,14 +32,6 @@ public class SelectionActivity extends ActionBarActivity {
     }
 
     private void setGenderAndContinue(String gender) {
-
-        Context context = getApplicationContext();
-        CharSequence text = "button clicked";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-
         // Store gender
         SharedPreferences prefs = getSharedPreferences("net.spiralpower.pottytag", MODE_PRIVATE);
         Editor editor  = prefs.edit();
@@ -95,12 +87,10 @@ public class SelectionActivity extends ActionBarActivity {
         if (whichBlink == 0)
         {
             malePoop.setImageResource(R.drawable.m_cutiepoo_blink);
-            malePoop.postInvalidate();
         }
         else
         {
             femalePoop.setImageResource(R.drawable.f_cutiepoo_blink);
-            femalePoop.postInvalidate();
         }
 
         Runnable removeBlink = new Runnable() {
@@ -123,8 +113,6 @@ public class SelectionActivity extends ActionBarActivity {
 
         malePoop.setImageResource(R.drawable.m_cutiepoo);
         femalePoop.setImageResource(R.drawable.f_cutiepoo);
-        malePoop.postInvalidate();
-        femalePoop.postInvalidate();
 
         Random random = new Random();
         int blinkRestDuration = random.nextInt(5 - 2) + 2;
