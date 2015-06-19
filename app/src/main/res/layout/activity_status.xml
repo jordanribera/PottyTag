@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".StatusActivity"
-    android:background="#ffffc669">
+    android:background="#ffffc669"
+    android:id="@+id/mainLayout">
 
 
     <ImageView
@@ -24,7 +25,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:src="@drawable/action_button_states"
+        android:src="@drawable/action_button_checkin_states"
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp"
         android:layout_marginBottom="32dp"
@@ -99,7 +100,7 @@
             android:paddingStart="48dp"
             android:layout_marginBottom="32dp"
             android:layout_marginTop="-48dp"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -111,7 +112,7 @@
             android:paddingEnd="48dp"
             android:layout_marginTop="-48dp"
             android:layout_marginBottom="32dp"
-            android:visibility="visible" />
+            android:visibility="invisible" />
     </LinearLayout>
 
     <LinearLayout
@@ -130,10 +131,10 @@
             android:id="@+id/leftPooper"
             android:src="@drawable/m_cutiepoo_use"
             android:layout_weight="1"
-            android:paddingEnd="24dp"
-            android:paddingStart="24dp"
-            android:layout_marginBottom="64dp"
-            android:layout_marginTop="-64dp"
+            android:paddingEnd="32dp"
+            android:paddingStart="32dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="-24dp"
             android:visibility="invisible" />
 
         <ImageView
@@ -142,11 +143,24 @@
             android:id="@+id/rightPooper"
             android:src="@drawable/f_cutiepoo_use"
             android:layout_weight="1"
-            android:paddingStart="48dp"
-            android:paddingEnd="24dp"
-            android:layout_marginTop="-64dp"
-            android:layout_marginBottom="64dp"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
+            android:layout_marginTop="-24dp"
+            android:layout_marginBottom="16dp"
             android:visibility="invisible" />
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/menuButton"
+        android:src="@drawable/menu_button"
+        android:layout_above="@+id/waterDrop"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="false"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_marginRight="-24dp"
+        android:onClick="rechooseGender" />
 
 </RelativeLayout>
