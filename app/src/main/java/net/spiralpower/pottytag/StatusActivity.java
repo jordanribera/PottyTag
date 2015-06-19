@@ -27,6 +27,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 
+import java.util.Random;
+
 
 public class StatusActivity extends ActionBarActivity {
 
@@ -34,7 +36,8 @@ public class StatusActivity extends ActionBarActivity {
     private RequestQueue mRequestQueue;
     private String mGender;
     private int mLastCheckIn;
-    private boolean mDebugSelection = false;
+
+    private final String mAPILocation = "http://spiralpower.net/pottytag/api/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,20 +46,12 @@ public class StatusActivity extends ActionBarActivity {
 
         SharedPreferences prefs = getSharedPreferences("net.spiralpower.pottytag", MODE_PRIVATE);
 
-        if (mDebugSelection)
-        {
-            SharedPreferences.Editor prefsEditor = prefs.edit();
-            prefsEditor.clear();
-            prefsEditor.commit();
-            prefs = getSharedPreferences("net.spiralpower.pottytag", MODE_PRIVATE);
-        }
-
-        if(prefs.contains("gender") || !mDebugSelection) {
+        if(prefs.contains("gender")) {
             this.mGender = prefs.getString("gender", "z");
 
             setContentView(R.layout.activity_status);
 
-            Button actionButton = (Button) this.findViewById(R.id.actionButton);
+            ImageView actionButton = (ImageView) this.findViewById(R.id.actionButton);
             actionButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     handleActionButtonClick(v);
@@ -108,7 +103,7 @@ public class StatusActivity extends ActionBarActivity {
     public void handleActionButtonClick(View v)
     {
         //Button actionButton = (Button)this.findViewById(R.id.actionButton);
-        Button actionButton = (Button)v;
+        ImageView actionButton = (ImageView)v;
 
         if (this.mCheckedIn)
         {
@@ -131,21 +126,33 @@ public class StatusActivity extends ActionBarActivity {
 
     public void updateActionButton()
     {
-        Button actionButton = (Button)this.findViewById(R.id.actionButton);
+        ImageView actionButton = (ImageView)this.findViewById(R.id.actionButton);
         if (mCheckedIn)
         {
-            actionButton.setText("Check Out");
+            //actionButton.setText("Check Out");
+            Context context = getApplicationContext();
+            CharSequence text = "checked in";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
         }
         else
         {
-            actionButton.setText("Check In");
+            //actionButton.setText("Check In");
+            Context context = getApplicationContext();
+            CharSequence text = "checked out";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
         }
 
     }
 
     public void doCheckIn()
     {
-        String url = "http://spiralpower.net/pottytag/?r=action&action=checkin&gender=" + this.mGender;
+        String url = mAPILocation + "?r=action&action=checkin&gender=" + this.mGender;
         if (this.mLastCheckIn > 0)
         {
             url = url + "&last_checkin=" + this.mLastCheckIn;
@@ -180,8 +187,6 @@ public class StatusActivity extends ActionBarActivity {
                     mCheckedIn = true;
                     updateActionButton();
                 }
-
-                //getStatus();
             }
         };
 
@@ -199,7 +204,7 @@ public class StatusActivity extends ActionBarActivity {
 
     public void doCheckOut()
     {
-        String url = "http://spiralpower.net/pottytag/?r=action&action=checkout&checkin_id=" + this.mLastCheckIn;
+        String url = mAPILocation + "?r=action&action=checkout&last_checkin=" + this.mLastCheckIn;
         Log.d("potty_debug", url);
 
         Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>()
@@ -229,7 +234,7 @@ public class StatusActivity extends ActionBarActivity {
 
     public void getStatus()
     {
-        String url = "http://spiralpower.net/pottytag/?r=status";
+        String url = mAPILocation + "?r=status";
         Log.d("potty_debug", url);
 
         Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>()
@@ -238,6 +243,28 @@ public class StatusActivity extends ActionBarActivity {
             public void onResponse(JSONObject response)
             {
                 Log.d("potty_debug", response.toString());
+                //Context context = getApplicationContext();
+                //CharSequence text = response.toString();
+                //int duration = Toast.LENGTH_SHORT;
+
+                //Toast toast = Toast.makeText(context, text, duration);
+                //toast.show();
+
+                int maleCount = 0;
+                int femaleCount = 0;
+                boolean leftToiletValid = true;
+                boolean rightToiletValid = true;
+
+                try
+                {
+                    maleCount = response.getInt("m_population");
+                    femaleCount = response.getInt("f_population");
+                    leftToiletValid = response.getBoolean("left_toilet");
+                    rightToiletValid = response.getBoolean("right_toilet");
+                }
+                catch (Exception e) {}
+
+                displayStatus(maleCount, femaleCount, leftToiletValid, rightToiletValid);
             }
         };
 
@@ -251,5 +278,99 @@ public class StatusActivity extends ActionBarActivity {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, responseListener, responseErrorListener);
 
         mRequestQueue.add(jsonObjectRequest);
+    }
+
+    public void displayStatus(int maleCount, int femaleCount, boolean leftToiletValid, boolean rightToiletValid)
+    {
+        Random random = new Random();
+
+        boolean mixedPopulation = false;
+        boolean malePopulation = false;
+        boolean femalePopulation = false;
+        if (maleCount > 1) malePopulation = true;
+        if (femaleCount > 1) femalePopulation = true;
+        if (malePopulation && femalePopulation) mixedPopulation = true;
+
+        String[] populationLayout = new String[]{"empty", "empty"};
+        if (malePopulation)
+        {
+            populationLayout = new String[]{"male", "empty"};
+            if (maleCount > 1) populationLayout = new String[]{"male", "male"};
+        }
+        if (femalePopulation)
+        {
+            populationLayout = new String[]{"female", "empty"};
+            if (femaleCount > 1) populationLayout = new String[]{"female", "female"};
+        }
+        if (mixedPopulation) populationLayout = new String[]{"female", "male"};
+
+        Log.d("potty_debug", populationLayout[0] + ":" + populationLayout[1]);
+
+        //poopers
+        ImageView leftPooper = (ImageView)findViewById(R.id.leftPooper);
+        ImageView rightPooper = (ImageView)findViewById(R.id.rightPooper);
+
+        //signs
+        ImageView leftSign = (ImageView)findViewById(R.id.leftSign);
+        ImageView rightSign = (ImageView)findViewById(R.id.rightSign);
+
+        //toilet flags
+        if (!leftToiletValid)
+        {
+            Log.w("potty_debug", "left toilet invalid");
+            leftSign.setVisibility(View.VISIBLE);
+            leftPooper.setVisibility(View.INVISIBLE);
+            leftSign.refreshDrawableState();
+        }
+        else
+        {
+            Log.w("potty_debug", "left toilet valid");
+            leftSign.setVisibility(View.INVISIBLE);
+        }
+
+        if (!rightToiletValid)
+        {
+            Log.w("potty_debug", "right toilet invalid");
+            rightSign.setVisibility(View.VISIBLE);
+            rightPooper.setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+            Log.w("potty_debug", "right toilet valid");
+            leftSign.setVisibility(View.INVISIBLE);
+        }
+
+        if (!leftToiletValid && !rightToiletValid) return;
+
+        if (populationLayout[0].equals("female") && leftToiletValid)
+        {
+            leftPooper.setImageResource(R.drawable.f_cutiepoo_use);
+            leftPooper.setVisibility(View.VISIBLE);
+        }
+        else if (populationLayout[0].equals("male") && leftToiletValid)
+        {
+            leftPooper.setImageResource(R.drawable.m_cutiepoo_use);
+            leftPooper.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            leftPooper.setVisibility(View.INVISIBLE);
+        }
+
+        if (populationLayout[1].equals("female") && leftToiletValid)
+        {
+            rightPooper.setImageResource(R.drawable.f_cutiepoo_use);
+            rightPooper.setVisibility(View.VISIBLE);
+        }
+        else if (populationLayout[1].equals("male") && leftToiletValid)
+        {
+            rightPooper.setImageResource(R.drawable.m_cutiepoo_use);
+            rightPooper.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            rightPooper.setVisibility(View.INVISIBLE);
+        }
+        Log.w("potty_debug", "what is going on");
     }
 }
