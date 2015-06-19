@@ -8,11 +8,12 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:id="@+id/statusImage"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
+        android:background="@color/background_material_dark"
         android:layout_margin="32dp" />
 
     <Button
