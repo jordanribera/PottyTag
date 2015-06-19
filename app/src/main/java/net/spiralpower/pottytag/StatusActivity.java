@@ -54,6 +54,8 @@ public class StatusActivity extends ActionBarActivity {
     private int mNotificationID = 1337;
     private boolean mNotificationActive;
 
+    private int lennyCounter = 0;
+
     @Override
     protected void onResume()
     {
@@ -557,5 +559,20 @@ public class StatusActivity extends ActionBarActivity {
                 doCheckOut();
             }
         }, expirationTimeMs);
+    }
+
+    public void handleLenny(View v)
+    {
+        lennyCounter++;
+        if (lennyCounter > 5)
+        {
+            Context context = getApplicationContext();
+            CharSequence text = "( ͡° ͜ʖ ͡°)";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            lennyCounter = 0;
+        }
+
     }
 }

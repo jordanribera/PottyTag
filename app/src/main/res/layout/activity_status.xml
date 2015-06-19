@@ -139,7 +139,8 @@
             android:paddingStart="32dp"
             android:layout_marginBottom="16dp"
             android:layout_marginTop="-24dp"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            android:onClick="handleLenny" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -151,7 +152,8 @@
             android:paddingEnd="32dp"
             android:layout_marginTop="-24dp"
             android:layout_marginBottom="16dp"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            android:onClick="handleLenny" />
     </LinearLayout>
 
     <ImageView
