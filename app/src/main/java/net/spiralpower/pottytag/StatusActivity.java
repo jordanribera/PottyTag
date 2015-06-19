@@ -89,7 +89,7 @@ public class StatusActivity extends ActionBarActivity {
 
             setContentView(R.layout.activity_status);
 
-            popPlayer = MediaPlayer.create(this, R.raw.pop);
+            popPlayer = MediaPlayer.create(this, R.raw.plop);
             flushPlayer = MediaPlayer.create(this, R.raw.flush);
 
             ImageView actionButton = (ImageView) this.findViewById(R.id.actionButton);

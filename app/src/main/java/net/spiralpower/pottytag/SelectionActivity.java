@@ -55,7 +55,7 @@ public class SelectionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection);
-        popPlayer = MediaPlayer.create(this, R.raw.pop);
+        popPlayer = MediaPlayer.create(this, R.raw.plop);
 
         ImageView malePoop = (ImageView)findViewById(R.id.maleButton);
         ImageView femalePoop = (ImageView)findViewById(R.id.femaleButton);
