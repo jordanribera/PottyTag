@@ -4,4 +4,6 @@
     <string name="please_select_gender">Please select your gender</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_selection">Potty Tag</string>
+    <string name="male_casual">Guy</string>
+    <string name="female_casual">Girl</string>
 </resources>

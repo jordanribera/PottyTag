@@ -34,6 +34,7 @@ public class StatusActivity extends ActionBarActivity {
     private RequestQueue mRequestQueue;
     private String mGender;
     private int mLastCheckIn;
+    private boolean mDebugSelection = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class StatusActivity extends ActionBarActivity {
 
 
 
-        if(prefs.contains("gender")) {
+        if(prefs.contains("gender") || mDebugSelection) {
             this.mGender = prefs.getString("gender", "z");
 
             setContentView(R.layout.activity_status);
