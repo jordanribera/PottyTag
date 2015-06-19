@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.media.MediaPlayer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,8 @@ public class SelectionActivity extends ActionBarActivity {
 
     private static final ScheduledExecutorService mBlinkWorker = Executors.newSingleThreadScheduledExecutor();
 
+    MediaPlayer popPlayer;
+
     public void onMaleClick(View view) {
         setGenderAndContinue("m");
     }
@@ -33,6 +36,7 @@ public class SelectionActivity extends ActionBarActivity {
 
     private void setGenderAndContinue(String gender) {
         // Store gender
+        popPlayer.start();
         SharedPreferences prefs = getSharedPreferences("net.spiralpower.pottytag", MODE_PRIVATE);
         Editor editor  = prefs.edit();
         editor.putString("gender", gender);
@@ -49,6 +53,7 @@ public class SelectionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection);
+        popPlayer = MediaPlayer.create(this, R.raw.pop);
         //unBlink();
     }
 

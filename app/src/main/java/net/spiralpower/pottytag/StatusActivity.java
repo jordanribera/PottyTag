@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -56,6 +57,9 @@ public class StatusActivity extends ActionBarActivity {
 
     private int lennyCounter = 0;
 
+    private MediaPlayer popPlayer;
+    private MediaPlayer flushPlayer;
+
     @Override
     protected void onResume()
     {
@@ -84,6 +88,9 @@ public class StatusActivity extends ActionBarActivity {
             this.mGender = prefs.getString("gender", "z");
 
             setContentView(R.layout.activity_status);
+
+            popPlayer = MediaPlayer.create(this, R.raw.pop);
+            flushPlayer = MediaPlayer.create(this, R.raw.flush);
 
             ImageView actionButton = (ImageView) this.findViewById(R.id.actionButton);
             actionButton.setOnClickListener(new View.OnClickListener() {
@@ -227,6 +234,7 @@ public class StatusActivity extends ActionBarActivity {
                     mLastCheckIn = responseID;
                     mCheckedIn = true;
                     updateActionButton();
+                    popPlayer.start();
                     startWarningTimer();
                     startExpirationTimer();
                 }
@@ -260,6 +268,7 @@ public class StatusActivity extends ActionBarActivity {
                 //check success?
                 mCheckedIn = false;
                 updateActionButton();
+                flushPlayer.start();
             }
         };
 
@@ -310,6 +319,7 @@ public class StatusActivity extends ActionBarActivity {
             @Override
             public void onResponse(JSONObject response)
             {
+                popPlayer.start();
                 getStatus();
             }
         };
