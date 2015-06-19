@@ -10,12 +10,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/waveImage"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentBottom="false"
         android:layout_centerHorizontal="true"
         android:src="@drawable/wave"
         android:layout_alignTop="@+id/actionButton"
         android:visibility="visible"
-        android:scaleType="fitEnd" />
+        android:scaleType="fitXY"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="false" />
 
     <ImageView
         android:layout_width="wrap_content"

@@ -1,8 +1,11 @@
 package net.spiralpower.pottytag;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +31,8 @@ import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class StatusActivity extends ActionBarActivity {
@@ -40,7 +45,31 @@ public class StatusActivity extends ActionBarActivity {
     private boolean mLeftToiletFlagged;
     private boolean mRightToiletFlagged;
 
+    private boolean mActivityVisible = true;
+
+    private Timer timer = new Timer();
+
     private final String mAPILocation = "http://spiralpower.net/pottytag/api/";
+
+    private int mNotificationID = 1337;
+    private boolean mNotificationActive;
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        mActivityVisible = true;
+        Log.d("potty_debug", "onResume()");
+        nextTimer();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        mActivityVisible = false;
+        Log.d("potty_debug", "onPause()");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +99,7 @@ public class StatusActivity extends ActionBarActivity {
             });
 
             ImageView rightToilet = (ImageView)findViewById(R.id.toiletRight);
-            leftToilet.setOnClickListener(new View.OnClickListener() {
+            rightToilet.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     toggleFlag(1);
@@ -90,6 +119,7 @@ public class StatusActivity extends ActionBarActivity {
             mRequestQueue.start();
 
             getStatus();
+            nextTimer();
         }
         else
         {
@@ -438,11 +468,65 @@ public class StatusActivity extends ActionBarActivity {
             Log.d("potty_debug", "hiding right");
             rightPooper.setVisibility(View.INVISIBLE);
         }
+
+        //special case for shifting layout[0] to the right if left toilet is invalidated
+        if (!leftToiletValid && rightToiletValid)
+        {
+            if (populationLayout[0].equals("female"))
+            {
+                Log.d("potty_debug", "showing female right");
+                rightPooper.setImageResource(R.drawable.f_cutiepoo_use);
+                rightPooper.setVisibility(View.VISIBLE);
+            }
+            else if (populationLayout[0].equals("male"))
+            {
+                Log.d("potty_debug", "showing male right");
+                rightPooper.setImageResource(R.drawable.m_cutiepoo_use);
+                rightPooper.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                Log.d("potty_debug", "hiding right");
+                rightPooper.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
-    public void rechooseGender()
+    public void rechooseGender(View v)
     {
+        createNotification();
         Intent settingsActivityIntent = new Intent(this, SelectionActivity.class);
         startActivity(settingsActivityIntent);
+    }
+
+    public void nextTimer()
+    {
+
+        int timerInterval = 3000;
+        //if (!mActivityVisible) timerInterval = 30000;
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getStatus();
+                Log.d("potty_debug", "timer tick");
+                if (mActivityVisible) nextTimer();
+            }
+        }, timerInterval);
+    }
+
+    public void createNotification()
+    {
+        Intent noteIntent = new Intent(this, StatusActivity.class);
+        PendingIntent notePendingIntent = PendingIntent.getActivity(this, 0, noteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder noteBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Potty Tag")
+                .setContentText("Your checked in status is about to expire.")
+                .setContentIntent(notePendingIntent);
+
+        NotificationManager noteManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        noteManager.notify(mNotificationID, noteBuilder.build());
     }
 }
