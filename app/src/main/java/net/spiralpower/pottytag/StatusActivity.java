@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Cache;
@@ -41,10 +42,15 @@ public class StatusActivity extends ActionBarActivity {
 
         SharedPreferences prefs = getSharedPreferences("net.spiralpower.pottytag", MODE_PRIVATE);
 
+
+
         if(prefs.contains("gender")) {
             this.mGender = prefs.getString("gender", "z");
 
             setContentView(R.layout.activity_status);
+
+            ImageView statusImage = (ImageView)findViewById(R.id.statusImage);
+            statusImage.setMinimumHeight(statusImage.getMeasuredWidth());
 
             Button actionButton = (Button) this.findViewById(R.id.actionButton);
             actionButton.setOnClickListener(new View.OnClickListener() {
@@ -101,19 +107,13 @@ public class StatusActivity extends ActionBarActivity {
         //Button actionButton = (Button)this.findViewById(R.id.actionButton);
         Button actionButton = (Button)v;
 
-        this.mCheckedIn = !this.mCheckedIn;
-
         if (this.mCheckedIn)
         {
-            doCheckIn();
-            actionButton.setText("Check Out");
-            this.mCheckedIn = true;
+            doCheckOut();
         }
         else
         {
-            doCheckOut();
-            actionButton.setText("Check In");
-            this.mCheckedIn = false;
+            doCheckIn();
         }
 
         getStatus();
@@ -126,6 +126,20 @@ public class StatusActivity extends ActionBarActivity {
         toast.show();*/
     }
 
+    public void updateActionButton()
+    {
+        Button actionButton = (Button)this.findViewById(R.id.actionButton);
+        if (mCheckedIn)
+        {
+            actionButton.setText("Check Out");
+        }
+        else
+        {
+            actionButton.setText("Check In");
+        }
+
+    }
+
     public void doCheckIn()
     {
         String url = "http://spiralpower.net/pottytag/?r=action&action=checkin&gender=" + this.mGender;
@@ -133,7 +147,6 @@ public class StatusActivity extends ActionBarActivity {
         {
             url = url + "&last_checkin=" + this.mLastCheckIn;
         }
-
         Log.d("potty_debug", url);
 
         Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>()
@@ -141,6 +154,8 @@ public class StatusActivity extends ActionBarActivity {
             @Override
             public void onResponse(JSONObject response)
             {
+                Log.d("potty_debug", response.toString());
+
                 //check success?
                 Boolean responseSuccess = false;
                 try
@@ -159,6 +174,8 @@ public class StatusActivity extends ActionBarActivity {
                     catch (Exception e) { }
 
                     mLastCheckIn = responseID;
+                    mCheckedIn = true;
+                    updateActionButton();
                 }
 
                 //getStatus();
@@ -180,14 +197,18 @@ public class StatusActivity extends ActionBarActivity {
     public void doCheckOut()
     {
         String url = "http://spiralpower.net/pottytag/?r=action&action=checkout&checkin_id=" + this.mLastCheckIn;
+        Log.d("potty_debug", url);
 
         Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>()
         {
             @Override
             public void onResponse(JSONObject response)
             {
+                Log.d("potty_debug", response.toString());
+
                 //check success?
-                getStatus();
+                mCheckedIn = false;
+                updateActionButton();
             }
         };
 
@@ -206,18 +227,14 @@ public class StatusActivity extends ActionBarActivity {
     public void getStatus()
     {
         String url = "http://spiralpower.net/pottytag/?r=status";
+        Log.d("potty_debug", url);
 
         Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>()
         {
             @Override
             public void onResponse(JSONObject response)
             {
-                Context context = getApplicationContext();
-                CharSequence text = response.toString();
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                Log.d("potty_debug", response.toString());
             }
         };
 
